@@ -1,0 +1,62 @@
+---
+
+- name: Tomcat Installation and deployment
+  hosts: dev
+  sudo: True
+  tasks:
+  - name: Installing required basic s/w
+    apt: pkg={{ item }} state=latest
+    with_items:
+       - curl
+       - wget
+  
+#  - name: tomcat7 installation
+#    apt: pkg=tomcat7 state=latest
+
+
+  - copy:
+     src: /home/ubuntu/new/files/CounterWebApp.war
+     dest: /var/lib/tomcat7/webapps/
+     owner: tomcat
+     group: tomcat
+     mode: 077
+
+#  - name: Adding CATALINA HOME to env variables
+#    lineinfile: dest=/etc/environment regexp='^CATALINA_HOME'>
+#                line="CATALINA_HOME=/usr/share/tomcat7"
+
+  - name: checking the env variables again
+    shell: "echo $CATALINA_HOME"
+
+#  - name: Adding tomcat path to env variables
+#    lineinfile:
+#      path: /etc/environment
+#      regexp: '^PATH'
+#      insertafter: '/usr/local/bin:'
+#      line: 'PATH:"usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/share/tomcat7/bin"'
+
+  - name: moving the server files to the dev server
+    copy:
+     src: /home/ubuntu/new/files/server.xml
+#     dest: var/lib/tomcat7/conf
+     dest: /home/ubuntu
+     owner: tomcat
+     group: tomcat
+     mode: 0644 
+  
+  - name: moving the tomcat users to the dev server
+    copy:
+     src: /home/ubuntu/new/files/tomcat-users.xml
+#     dest: var/lib/tomcat7/conf
+     dest: /home/ubuntu
+     owner: tomcat
+     group: tomcat
+     mode: 0644    
+
+  - name: execting the shell script to move the files to the desired location
+    command: sh /home/ubuntu/copyscript.sh 
+
+  - name: restarting tomcat service
+    service:
+      name: tomcat7
+      state: restarted 

@@ -1,0 +1,18 @@
+---
+  - name: tomcat7 installation
+    apt: pkg=tomcat7 state=latest
+
+  - name: Adding CATALINA HOME to env variables
+    lineinfile: dest=~/.bashrc regexp='^CATALINA_HOME'>
+                line="export CATALINA_HOME={{ catalina_home }}"
+
+  - name: checking the env variables again
+    shell: "echo $CATALINA_HOME"
+
+  - name: Adding Tomcat path
+    lineinfile: >
+      dest={{ env_path }}
+      state=present
+      backrefs=yes
+      regexp='PATH=(["]*)((?!.*?{{ catalina_home }}/bin).*?)(["]*)$'
+      line="PATH=\1\2:{{ catalina_home }}/bin\3"

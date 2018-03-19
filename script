@@ -1,0 +1,3 @@
+#/bin/ksh
+cd /home/ubuntu/new
+ansible-playbook deployment.yml --user ubuntu

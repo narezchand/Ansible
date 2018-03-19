@@ -1,0 +1,4 @@
+---
+catalina_home=/usr/share/tomcat7
+#server_file=/var/lib/tomcat7/conf/server.xml
+#tomcat_users=/var/lib/tomcat7/conf/tomcat-users.xml
